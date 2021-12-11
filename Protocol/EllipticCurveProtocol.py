@@ -1,7 +1,12 @@
 class EllipticCurveProtocol:
     def __init__(self, a=1,b=0,z=1):
-        self.a = a
-        self.b = b
+        weierstrass_approach = 4 * pow(a, 3) + 27 * pow(b, 2)
+        if weierstrass_approach:
+            self._a = a
+            self._b = b
+            print ("All variables are set successfully!")
+        else:
+            ValueError("a and b do not meet WeierStrass approach! please recheck!!")
         self.z = z
         self.s = 0
         self.x1 = None
@@ -84,6 +89,6 @@ class EllipticCurveProtocol:
 
 if __name__ == "__main__":
     fn = EllipticCurveProtocol(-3,3, 17)
-    fn.set_base_point_p(3,2)
-    result = fn.multiply_point_ecc(3)
-    print(result)
+    #fn.set_base_point_p(3,2)
+    #result = fn.multiply_point_ecc(3)
+    #print(result)
