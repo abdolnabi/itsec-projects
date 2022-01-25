@@ -1,6 +1,4 @@
-import random
-from .EllipticCurveMath import EllipticCurveMath
-#y^2=x^3+A*x+B
+from EllipticCurveMath import EllipticCurveMath
 
 class EllipticCurveProtocol:
     def __init__(self, a, b, P, N, Gx, Gy, name,nistName=None):
@@ -57,4 +55,4 @@ class EllipticCurveProtocol:
         return not p or (p[1] ** 2 == p[0] ** 3 + self.a * p[0] + self.b)
 
 if __name__ == "__main__":
-    print("1")
+    print("Do nothing")

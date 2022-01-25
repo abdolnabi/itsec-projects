@@ -1,7 +1,6 @@
-import random
+from RandomGenerator import RandomGenerator
 import time
-import sys
-#sys.path.append(".")
+import random
 from CheckPrime import CheckPrime
 
 class FindInitialPrimeValues:
@@ -16,14 +15,13 @@ class FindInitialPrimeValues:
                 return q
 
     def find_both_primes(self):
-
         q = self.find_prime_q()
         for i in range (1,4096):
             M = random.randrange(self.p_lower,self.p_upper)
             Mr = M %2*q
             p = M-Mr +1
             if CheckPrime.miller_rabin(p):
-                return (p,q)
+                return p,q
             else:
                 self.find_prime_q()
 
