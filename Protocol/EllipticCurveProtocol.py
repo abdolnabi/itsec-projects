@@ -1,5 +1,9 @@
+import random
+from .EllipticCurveMath import EllipticCurveMath
+#y^2=x^3+A*x+B
+
 class EllipticCurveProtocol:
-    def __init__(self, a=1,b=0,z=1):
+    def __init__(self, a, b, P, N, Gx, Gy, name,nistName=None):
         weierstrass_approach = 4 * pow(a, 3) + 27 * pow(b, 2)
         if weierstrass_approach:
             self._a = a
@@ -7,35 +11,30 @@ class EllipticCurveProtocol:
             print ("All variables are set successfully!")
         else:
             ValueError("a and b do not meet WeierStrass approach! please recheck!!")
-        self.z = z
+        self.z = P
         self.s = 0
-        self.x1 = None
-        self.y1 = None
-        self.x2 = None
-        self.y2 = None
+        self.Xp = Gx
+        self.Yp = Gy
+
+        self.Xq = None
+        self.Yq = None
         self.x3 = None
         self.y3 = None
         self.d = None
 
-    def set_base_point_p(self,x1=0,y1=0):
-        self.x1 = x1
-        self.y1 = y1
-        self.p = (x1,y1)
+    def set_base_point_p(self, Xp=0, Yp=0):
+        self.Xp = Xp
+        self.Yp = Yp
+        self.p = (Xp, Yp)
 
-    def set_base_point_q(self,x2= None,y2=None):
-        if x2 is None and y2 is None:
-            self.x2 = 0
-            self.y2 = 0
+    def set_base_point_q(self, Xq= None, Yq=None):
+        if Xq is None and Yq is None:
+            self.Xq = 0
+            self.Yq = 0
         else:
-            self.x2 = x2
-            self.y2 = y2
-        self.q = (x2,y2)
-
-    def modInverse(self,a, m):
-        for x in range(1, m):
-            if (((a % m) * (x % m)) % m == 1):
-                return x
-        return -1
+            self.Xq = Xq
+            self.Yq = Yq
+        self.q = (Xq, Yq)
 
     def calc_elliptic_curve_s(self,p,q):
         x1,y1 = p
@@ -49,46 +48,13 @@ class EllipticCurveProtocol:
         if s_down == 0:
             self.s = None
             return
-        self.s = int(s_up * self.modInverse(s_down,self.z)) % self.z
+        self.s = int(s_up * EllipticCurveMath.modInverse(s_down,self.z)) % self.z
 
-
-    def calc_elliptic_curve_double(self,p):
-        x1,y1 = p
-        if p ==(0,0):
-            return 0,0
-        x2 = x1
-        y2 = y1
-        self.calc_elliptic_curve_s(p,p)
-        if self.s is not None:
-            x3 = (pow(self.s, 2) - x1 - x2) % self.z
-            y3 = (self.s * (x1 - x3) - y1) % self.z
-            return x3,y3
-
-    def calc_elliptic_curve_add(self,p,q):
-        x1,y1 = p
-        x2,y2 = q
-        if q == (0,0):
-            return p
-        self.calc_elliptic_curve_s(p,q)
-        if self.s is not None:
-            x3 = (pow(self.s, 2) - x1 - x2) % self.z
-            y3 = (self.s * (x1 - x3) - y1) % self.z
-            return x3,y3
-
-    def multiply_point_ecc(self,d=2):
-        d_bin = "{0:b}".format(d)
-        p = self.p
-        p1=(0,0)
-        for d_digit in d_bin:
-            p1 = self.calc_elliptic_curve_double(p1)
-            if d_digit == '1':
-                p1 = self.calc_elliptic_curve_add(p,p1)
-            if p1 is None:
-                p1 =0
-        return p1
+    def isoncurve(self, p):
+        """
+        verifies if a point is on the curve
+        """
+        return not p or (p[1] ** 2 == p[0] ** 3 + self.a * p[0] + self.b)
 
 if __name__ == "__main__":
-    fn = EllipticCurveProtocol(-3,3, 17)
-    #fn.set_base_point_p(3,2)
-    #result = fn.multiply_point_ecc(3)
-    #print(result)
+    print("1")

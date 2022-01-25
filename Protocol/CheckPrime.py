@@ -1,5 +1,5 @@
 import random
-class check_prime:
+class CheckPrime:
     def miller_rabin(n, k=40):
 
         # Implementation uses the Miller-Rabin Primality Test
