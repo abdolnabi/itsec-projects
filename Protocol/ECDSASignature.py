@@ -34,17 +34,16 @@ class ECDSA_Signature:
         return private_key,public_key
 
     def sign_msg(self,msg,priv_key):
-        KE = RandomGenerator.randgen(upper_bound=self.secp256k1.z)
+        KE = RandomGenerator.randgen(upper_bound=self.secp256k1.order)
         curve1 = EllipticCurveMath(d=KE, p=(self.secp256k1.Xp, self.secp256k1.Yp), a=self.secp256k1.a,z=self.secp256k1.order)
         R = curve1.multiply_point_ecc()
-        r = R[0]
+        r = R[0] % self.secp256k1.order
         hx = int(hashlib.sha256(msg.encode()).hexdigest(), 16)
         s = ((hx + priv_key * r) * pow(KE,-1, self.secp256k1.order)) % self.secp256k1.order
         return  r,s
 
 
     def verify_msg(self,r,s,msg,pub_key):
-
         z = pub_key["p_modulus"]
         a,b = pub_key["Coefficients"]
         q = pub_key["Order"]
@@ -61,7 +60,6 @@ class ECDSA_Signature:
         curve1 = EllipticCurveMath(p=u1A, a=a, z=z)
         P = curve1.calc_elliptic_curve_add(u2B)
         Px = P[0] % q
-        r = r % q
         if Px == r:
             print("Voala! The signature is valid")
         else:
